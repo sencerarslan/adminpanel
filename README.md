@@ -1,36 +1,61 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Admin Panel Project
 
-## Getting Started
+Bu proje, **.agents** kullanılarak verimli bir şekilde bir full stack admin panelinin geliştirilmesi ve [Vercel](https://vercel.com) üzerinde hızlıca deploy edilmesi amacıyla oluşturulmuştur.
 
-First, run the development server:
+## 🚀 Projenin Amacı
 
+Yapay zeka asistanları (AI agents) kullanılarak uçtan uca, modern bir web projesinin nasıl inşa edilebileceğini göstermek temel amacımızdır. Yapılandırmalar, veritabanı şemaları, API rotaları ve tasarımsal süreçlerin hepsi standardize edilmiş sistem kurallarına (memory rules) uygun şekilde bir asistan eşliğinde kodlanmış ve yayına alınmıştır.
+
+## 🛠️ Teknolojiler ve Stack
+
+- **Framework:** [Next.js](https://nextjs.org/) (App Router)
+- **Veritabanı ORM:** [Prisma](https://www.prisma.io/)
+- **Veritabanı:** Vercel Postgres / Neon  
+- **Stil & UI:** [Tailwind CSS](https://tailwindcss.com/), [shadcn/ui](https://ui.shadcn.com/)
+- **State Yönetimi:** [Zustand](https://zustand-demo.pmnd.rs/) (Client), [TanStack Query](https://tanstack.com/query/latest) (Server)
+- **Doğrulama (Auth):** HTTP-Only Cookies, JWT ve Rol/Sayfa Bâzlı Erişim (RBAC)
+- **Dağıtım (Deployment):** Vercel
+
+## 📦 Kurulum ve Çalıştırma
+
+### 1. Vercel Entegrasyonu
+
+Projenin veritabanı değişkenleri Vercel üzerinden alınmaktadır:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npx vercel link
+npx vercel env pull .env
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Geliştirme Ortamını Başlatma
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Veritabanı şemasını uygulayın ve varsayılan verileri yükleyin (seed):
+```bash
+npx prisma migrate dev
+npx prisma db seed
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Projeyi ayağa kaldırın:
+```bash
+pnpm install
+pnpm dev
+```
 
-## Learn More
+### 3. Docker ile Çalıştırma
 
-To learn more about Next.js, take a look at the following resources:
+Projenin Next.js kısmını Docker konteyneri içinde başlatmak ve Vercel'deki veritabanına doğrudan bağlanmak isterseniz:
+```bash
+docker compose -f docker-compose.vercel.yml up -d --build
+```
+Proje `http://localhost:3000` adresinde çalışacaktır.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 👥 Varsayılan Kullanıcılar
+(Veritabanı seed komutu çalıştırdığınızda oluşur)
+- **Süper Admin:** admin@adminpanel.com / `admin123`
+- **Editör:** editor@adminpanel.com / `editor123`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+> 💡 **Canlı Demo Girişi:** Canlıdaki projeyi test etmek için aşağıdaki bilgileri kullanabilirsiniz:
+> - **E-posta:** `admin@adminpanel.com`
+> - **Şifre:** `admin123`
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 💬 Katkı Belirtme
+Bu proje, geliştirici asistanlarına bir kural dosyası (`.agents` / `memory`) seti sunularak tamamen otomatik bir sistematiğe bağlanmıştır ve standartların dışına çıkılmamasına çok dikkat edilmiştir.
