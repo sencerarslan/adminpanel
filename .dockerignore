@@ -1,0 +1,12 @@
+node_modules/
+.next/
+out/
+build/
+.git/
+.env*
+!.env.example
+coverage/
+npm-debug.log*
+pnpm-debug.log*
+yarn-eslint.log*
+yarn-debug.log*

@@ -1,0 +1,46 @@
+---
+trigger: always_on
+glob:
+description: Files and directories the agent should ignore during analysis
+---
+
+# Ignore — Agent Exclusions
+
+# Build & cache
+.next/
+out/
+dist/
+.turbo/
+.cache/
+node_modules/
+
+# Docker data
+postgres_data/
+
+# Environment secrets
+.env
+.env.local
+.env.production
+
+# Lock files (okunabilir ama analiz gerekmez)
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# Test coverage output
+coverage/
+.nyc_output/
+
+# Editor configs
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
