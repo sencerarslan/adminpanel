@@ -19,7 +19,7 @@ function processQueue(error: unknown, token: string | null = null): void {
 }
 
 const api: AxiosInstance = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API_URL,
+    baseURL: process.env.NEXT_PUBLIC_API_URL || '/api',
     withCredentials: true,
     timeout: 10_000,
     headers: {
@@ -46,7 +46,7 @@ api.interceptors.response.use(
 
             try {
                 await axios.post(
-                    `${process.env.NEXT_PUBLIC_API_URL}/auth/refresh`,
+                    `${process.env.NEXT_PUBLIC_API_URL || '/api'}/auth/refresh`,
                     {},
                     { withCredentials: true },
                 );

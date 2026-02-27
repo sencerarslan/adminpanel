@@ -146,7 +146,7 @@ export function UserTable() {
                 columns={columns}
                 data={data?.data ?? []}
                 isLoading={isLoading}
-                pageCount={data?.pagination.totalPages ?? -1}
+                pageCount={data?.pagination?.totalPages ?? -1}
                 pagination={{ pageIndex: page - 1, pageSize: 10 }}
                 onPaginationChange={handlePaginationChange}
                 rowSelection={rowSelection}
