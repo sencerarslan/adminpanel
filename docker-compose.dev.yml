@@ -1,0 +1,23 @@
+services:
+  web:
+    image: node:22-alpine
+    container_name: adminpanel_dev
+    working_dir: /app
+    ports:
+      - "3000:3000"
+    volumes:
+      # Projedeki dosyaları container'a bağlıyoruz (canlı değişiklikler için)
+      - .:/app
+      # Container içindeki node_modules ve .next klasörlerini izole ediyoruz
+      - node_modules:/app/node_modules
+      - next_build:/app/.next
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+    command: sh -c "corepack enable pnpm && pnpm install && npx prisma generate && pnpm dev"
+
+volumes:
+  node_modules:
+  next_build:
