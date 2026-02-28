@@ -4,6 +4,7 @@ import { validateSession } from '@/lib/auth';
 import { requirePagePermission } from '@/lib/rbac';
 import { PAGE_KEYS } from '@/constants/pages';
 import { AccessDenied } from '@/components/ui/AccessDenied';
+import { ReportsOverview } from '@/components/features/reports/ReportsOverview';
 
 export const metadata: Metadata = {
     title: 'Raporlar',
@@ -18,9 +19,12 @@ export default async function ReportsPage(): Promise<React.JSX.Element> {
     const t = await getTranslations('reports');
 
     return (
-        <div>
-            <h1 className="mb-6 text-2xl font-bold tracking-tight">{t('title')}</h1>
-            <p className="text-muted-foreground">Raporlar yakında eklenecek.</p>
+        <div className="space-y-6">
+            <div>
+                <h1 className="text-2xl font-bold tracking-tight">{t('title')}</h1>
+                <p className="text-muted-foreground">{t('subtitle')}</p>
+            </div>
+            <ReportsOverview />
         </div>
     );
 }

@@ -1,9 +1,10 @@
 'use client';
 
 import * as React from 'react';
-import { useForm, useFieldArray } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import {
     Dialog,
@@ -16,7 +17,6 @@ import {
     FormControl,
     FormField,
     FormItem,
-    FormLabel,
 } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
@@ -42,16 +42,17 @@ interface UserPermissionDialogProps {
 }
 
 const ALL_PAGES = [
-    { key: PAGE_KEYS.USERS, label: 'Kullanıcılar' },
-    { key: PAGE_KEYS.ORDERS, label: 'Siparişler' },
-    { key: PAGE_KEYS.PRODUCTS, label: 'Ürünler' },
-    { key: PAGE_KEYS.REPORTS, label: 'Raporlar' },
-    { key: PAGE_KEYS.SETTINGS, label: 'Ayarlar' },
-];
+    { key: PAGE_KEYS.USERS, labelKey: 'users' },
+    { key: PAGE_KEYS.PRODUCTS, labelKey: 'products' },
+    { key: PAGE_KEYS.CATEGORIES, labelKey: 'categories' },
+    { key: PAGE_KEYS.REPORTS, labelKey: 'reports' },
+] as const;
 
-export function UserPermissionDialog({ user, open, onOpenChange }: UserPermissionDialogProps) {
+export function UserPermissionDialog({ user, open, onOpenChange }: UserPermissionDialogProps): React.JSX.Element | null {
     const { canUpdate } = usePagePermission(PAGE_KEYS.USERS);
     const { mutate, isPending } = useUpdateUserPermissions();
+    const t = useTranslations('permissions');
+    const tCommon = useTranslations('common');
 
     const defaultPermissions = ALL_PAGES.map((page) => {
         const existing = user.permissions?.find((p) => p.pageKey === page.key);
@@ -61,7 +62,7 @@ export function UserPermissionDialog({ user, open, onOpenChange }: UserPermissio
             canCreate: existing?.canCreate ?? false,
             canUpdate: existing?.canUpdate ?? false,
             canDelete: existing?.canDelete ?? false,
-            _label: page.label,
+            _labelKey: page.labelKey,
         };
     });
 
@@ -95,12 +96,12 @@ export function UserPermissionDialog({ user, open, onOpenChange }: UserPermissio
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
                 <DialogHeader>
-                    <DialogTitle>{user.name} - İzinleri Yönet</DialogTitle>
+                    <DialogTitle>{t('manageTitle', { name: user.name })}</DialogTitle>
                 </DialogHeader>
 
                 {user.isSuperAdmin ? (
                     <div className="rounded-md bg-emerald-50 p-4 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-200">
-                        <strong>Bilgi:</strong> Bu kullanıcı bir Süper Admin olduğu için sistemdeki tüm sayfalara ve işlemlere tam erişimi vardır. İzinleri sınırlandırmak isterseniz önce Süper Admin yetkisini kaldırmalısınız.
+                        <strong>{t('superAdminInfo')}</strong> {t('superAdminNotice')}
                     </div>
                 ) : (
                     <Form {...form}>
@@ -109,18 +110,20 @@ export function UserPermissionDialog({ user, open, onOpenChange }: UserPermissio
                                 <table className="w-full text-sm">
                                     <thead className="border-b bg-muted/50">
                                         <tr>
-                                            <th className="p-3 text-left font-semibold">Sayfa</th>
-                                            <th className="p-3 text-center font-semibold text-muted-foreground">Görüntüle</th>
-                                            <th className="p-3 text-center font-semibold text-muted-foreground">Oluştur</th>
-                                            <th className="p-3 text-center font-semibold text-muted-foreground">Düzenle</th>
-                                            <th className="p-3 text-center font-semibold text-muted-foreground">Sil</th>
+                                            <th className="p-3 text-left font-semibold">{t('page')}</th>
+                                            <th className="p-3 text-center font-semibold text-muted-foreground">{t('view')}</th>
+                                            <th className="p-3 text-center font-semibold text-muted-foreground">{t('create')}</th>
+                                            <th className="p-3 text-center font-semibold text-muted-foreground">{t('update')}</th>
+                                            <th className="p-3 text-center font-semibold text-muted-foreground">{t('delete')}</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-border">
                                         {defaultPermissions.map((pageConf, index) => (
                                             <tr key={pageConf.pageKey} className="hover:bg-muted/30">
-                                                <td className="p-3 font-medium">{pageConf._label}</td>
-                                                {['canView', 'canCreate', 'canUpdate', 'canDelete'].map((actionName) => (
+                                                <td className="p-3 font-medium">
+                                                    {t(`pageNames.${pageConf._labelKey}` as any)}
+                                                </td>
+                                                {(['canView', 'canCreate', 'canUpdate', 'canDelete'] as const).map((actionName) => (
                                                     <td key={actionName} className="p-3 text-center">
                                                         <FormField
                                                             control={form.control}
@@ -131,7 +134,7 @@ export function UserPermissionDialog({ user, open, onOpenChange }: UserPermissio
                                                                         <Switch
                                                                             checked={field.value}
                                                                             onCheckedChange={field.onChange}
-                                                                            aria-label={`${pageConf._label} için ${actionName}`}
+                                                                            aria-label={`${t(`pageNames.${pageConf._labelKey}` as any)} - ${actionName}`}
                                                                         />
                                                                     </FormControl>
                                                                 </FormItem>
@@ -147,11 +150,11 @@ export function UserPermissionDialog({ user, open, onOpenChange }: UserPermissio
 
                             <div className="flex justify-end gap-2">
                                 <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-                                    İptal
+                                    {tCommon('cancel')}
                                 </Button>
                                 <Button type="submit" disabled={isPending}>
                                     {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                    Kaydet
+                                    {tCommon('save')}
                                 </Button>
                             </div>
                         </form>

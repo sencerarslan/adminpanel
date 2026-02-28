@@ -4,6 +4,7 @@ import * as React from 'react';
 import { useQueryState, parseAsInteger } from 'nuqs';
 import { type PaginationState } from '@tanstack/react-table';
 import { useDebounce } from 'use-debounce';
+import { useTranslations } from 'next-intl';
 
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -29,7 +30,9 @@ import {
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 
-export function UserTable() {
+export function UserTable(): React.JSX.Element {
+    const t = useTranslations('users');
+    const tCommon = useTranslations('common');
     const { canDelete, canCreate } = usePagePermission(PAGE_KEYS.USERS);
 
     // URL state
@@ -115,7 +118,7 @@ export function UserTable() {
         <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
                 <Input
-                    placeholder="Kullanıcı ara..."
+                    placeholder={t('searchPlaceholder')}
                     value={search}
                     onChange={(e) => {
                         setSearch(e.target.value);
@@ -128,12 +131,12 @@ export function UserTable() {
                 {selectedIds.length > 0 && canDelete && (
                     <Button variant="destructive" size="sm" onClick={handleBulkDeleteClicked}>
                         <Trash className="mr-2 h-4 w-4" />
-                        {selectedIds.length} Seçiliyi Sil
+                        {t('deleteSelected', { count: selectedIds.length })}
                     </Button>
                 )}
                 {canCreate && (
                     <UserCreateDialog>
-                        <Button size="sm">Yeni Kullanıcı</Button>
+                        <Button size="sm">{t('create')}</Button>
                     </UserCreateDialog>
                 )}
             </div>
@@ -153,7 +156,7 @@ export function UserTable() {
                 onRowSelectionStateChange={setRowSelection}
                 onRowSelectionChange={(rows) => setSelectedIds(rows.map((r) => r.id))}
                 toolbar={toolbar}
-                emptyMessage="Kullanıcı bulunamadı."
+                emptyMessage={t('notFound')}
             />
 
             {selectedUserForPerm && (
@@ -168,19 +171,19 @@ export function UserTable() {
             <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        <AlertDialogTitle>Seçili kullanıcıyı silmek istediğinize emin misiniz?</AlertDialogTitle>
+                        <AlertDialogTitle>{t('deleteConfirmSingle')}</AlertDialogTitle>
                         <AlertDialogDescription>
-                            "{userToDelete?.name}" adlı kullanıcı kalıcı olarak silinecek. Bu işlem geri alınamaz.
+                            {t('deleteConfirmSingleDesc', { name: userToDelete?.name ?? '' })}
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel>İptal</AlertDialogCancel>
+                        <AlertDialogCancel>{tCommon('cancel')}</AlertDialogCancel>
                         <AlertDialogAction
                             onClick={confirmDelete}
                             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                             disabled={deleteMutation.isPending}
                         >
-                            Sil
+                            {tCommon('delete')}
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
@@ -190,19 +193,19 @@ export function UserTable() {
             <AlertDialog open={bulkDeleteDialogOpen} onOpenChange={setBulkDeleteDialogOpen}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        <AlertDialogTitle>{selectedIds.length} kullanıcıyı silmek istediğinize emin misiniz?</AlertDialogTitle>
+                        <AlertDialogTitle>{t('deleteConfirmBulk', { count: selectedIds.length })}</AlertDialogTitle>
                         <AlertDialogDescription>
-                            Seçili kullanıcılar kalıcı olarak silinecek. Bu işlem geri alınamaz.
+                            {t('deleteConfirmBulkDesc')}
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel>İptal</AlertDialogCancel>
+                        <AlertDialogCancel>{tCommon('cancel')}</AlertDialogCancel>
                         <AlertDialogAction
                             onClick={confirmBulkDelete}
                             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                             disabled={bulkDeleteMutation.isPending}
                         >
-                            Tümünü Sil
+                            {t('deleteAll')}
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>

@@ -1,8 +1,12 @@
 import type { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
 
-export const metadata: Metadata = {
-    title: 'Giriş Yap',
-};
+export async function generateMetadata(): Promise<Metadata> {
+    const t = await getTranslations('auth');
+    return {
+        title: t('loginTitle'),
+    };
+}
 
 interface AuthLayoutProps {
     readonly children: React.ReactNode;

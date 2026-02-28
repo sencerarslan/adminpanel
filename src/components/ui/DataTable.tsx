@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { useTranslations } from 'next-intl';
 import {
     type ColumnDef,
     type PaginationState,
@@ -48,10 +49,14 @@ export function DataTable<TData, TValue>({
     onSortingChange,
     onRowSelectionChange,
     toolbar,
-    emptyMessage = 'Kayıt bulunamadı.',
-    rowSelection = {},
+    emptyMessage,
+    rowSelection: controlledRowSelection,
     onRowSelectionStateChange,
 }: DataTableProps<TData, TValue>): React.JSX.Element {
+    const t = useTranslations('table');
+    const [internalRowSelection, setInternalRowSelection] = React.useState<Record<string, boolean>>({});
+    const rowSelection = controlledRowSelection !== undefined ? controlledRowSelection : internalRowSelection;
+
     const table = useReactTable({
         data,
         columns,
@@ -66,7 +71,7 @@ export function DataTable<TData, TValue>({
         manualSorting: true,
         onPaginationChange,
         onSortingChange,
-        onRowSelectionChange: onRowSelectionStateChange,
+        onRowSelectionChange: onRowSelectionStateChange || setInternalRowSelection,
         getCoreRowModel: getCoreRowModel(),
         getRowId: (row: any) => row.id,
     });
@@ -160,26 +165,33 @@ export function DataTable<TData, TValue>({
 
             <div className="flex items-center justify-between px-2">
                 <div className="text-sm text-muted-foreground">
-                    {table.getFilteredSelectedRowModel().rows.length} of {table.getFilteredRowModel().rows.length}{' '}
-                    satır seçili.
+                    {t('rowsSelected', {
+                        selected: table.getFilteredSelectedRowModel().rows.length,
+                        total: table.getFilteredRowModel().rows.length,
+                    })}
                 </div>
                 <div className="flex items-center space-x-2">
                     <button
-                        className="rounded p-1 text-sm disabled:opacity-50"
+                        className="rounded px-2 py-1 text-sm disabled:opacity-50 hover:bg-accent transition-colors"
                         onClick={() => table.previousPage()}
                         disabled={!table.getCanPreviousPage()}
+                        aria-label={t('previous')}
                     >
-                        Önceki
+                        {t('previous')}
                     </button>
-                    <span className="text-sm">
-                        Sayfa {table.getState().pagination?.pageIndex! + 1} / {table.getPageCount() || 1}
+                    <span className="text-sm px-1">
+                        {t('pageOf', {
+                            current: (table.getState().pagination?.pageIndex ?? 0) + 1,
+                            total: table.getPageCount() || 1,
+                        })}
                     </span>
                     <button
-                        className="rounded p-1 text-sm disabled:opacity-50"
+                        className="rounded px-2 py-1 text-sm disabled:opacity-50 hover:bg-accent transition-colors"
                         onClick={() => table.nextPage()}
                         disabled={!table.getCanNextPage()}
+                        aria-label={t('next')}
                     >
-                        Sonraki
+                        {t('next')}
                     </button>
                 </div>
             </div>

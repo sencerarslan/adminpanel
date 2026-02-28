@@ -11,19 +11,18 @@ export const ROUTES = {
     USERS: '/users',
     USER_DETAIL: (id: string) => `/users/${id}`,
 
-    // Orders
-    ORDERS: '/orders',
-    ORDER_DETAIL: (id: string) => `/orders/${id}`,
+
 
     // Products
     PRODUCTS: '/products',
     PRODUCT_DETAIL: (id: string) => `/products/${id}`,
 
+    // Categories
+    CATEGORIES: '/categories',
+    CATEGORY_DETAIL: (id: string) => `/categories/${id}`,
+
     // Reports
     REPORTS: '/reports',
 
-    // Settings
-    SETTINGS: '/settings',
-    SETTINGS_PERMISSIONS: '/settings/permissions',
-    SETTINGS_PROFILE: '/settings/profile',
+
 } as const;

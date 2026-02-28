@@ -4,6 +4,7 @@ import * as React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import {
     Dialog,
@@ -33,10 +34,13 @@ interface UserCreateDialogProps {
     children: React.ReactNode;
 }
 
-export function UserCreateDialog({ children }: UserCreateDialogProps) {
+export function UserCreateDialog({ children }: UserCreateDialogProps): React.JSX.Element | null {
     const [open, setOpen] = React.useState(false);
     const { canCreate } = usePagePermission(PAGE_KEYS.USERS);
     const { mutate, isPending } = useCreateUser();
+    const t = useTranslations('users');
+    const tCommon = useTranslations('common');
+    const tAuth = useTranslations('auth');
 
     const form = useForm<CreateUserDto>({
         resolver: zodResolver(createUserSchema),
@@ -66,7 +70,7 @@ export function UserCreateDialog({ children }: UserCreateDialogProps) {
             <DialogTrigger asChild>{children}</DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>Yeni Kullanıcı Ekle</DialogTitle>
+                    <DialogTitle>{t('addNew')}</DialogTitle>
                 </DialogHeader>
 
                 <Form {...form}>
@@ -76,9 +80,9 @@ export function UserCreateDialog({ children }: UserCreateDialogProps) {
                             name="name"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Ad Soyad</FormLabel>
+                                    <FormLabel>{t('name')}</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="Örn: Ahmet Yılmaz" {...field} />
+                                        <Input placeholder={t('namePlaceholder')} {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -90,9 +94,9 @@ export function UserCreateDialog({ children }: UserCreateDialogProps) {
                             name="email"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>E-posta</FormLabel>
+                                    <FormLabel>{tAuth('email')}</FormLabel>
                                     <FormControl>
-                                        <Input type="email" placeholder="ornek@sirket.com" {...field} />
+                                        <Input type="email" placeholder={t('emailPlaceholder')} {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -104,9 +108,9 @@ export function UserCreateDialog({ children }: UserCreateDialogProps) {
                             name="password"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Şifre</FormLabel>
+                                    <FormLabel>{tAuth('password')}</FormLabel>
                                     <FormControl>
-                                        <Input type="password" placeholder="En az 6 karakter" {...field} />
+                                        <Input type="password" placeholder={t('passwordPlaceholder')} {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -119,7 +123,7 @@ export function UserCreateDialog({ children }: UserCreateDialogProps) {
                             render={({ field }) => (
                                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
                                     <div className="space-y-0.5">
-                                        <FormLabel>Süper Admin</FormLabel>
+                                        <FormLabel>{t('superAdmin')}</FormLabel>
                                     </div>
                                     <FormControl>
                                         <Switch
@@ -134,7 +138,7 @@ export function UserCreateDialog({ children }: UserCreateDialogProps) {
                         <div className="flex justify-end pt-4">
                             <Button type="submit" disabled={isPending}>
                                 {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                Oluştur
+                                {tCommon('create')}
                             </Button>
                         </div>
                     </form>

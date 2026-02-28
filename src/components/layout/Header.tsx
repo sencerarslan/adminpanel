@@ -5,11 +5,14 @@ import { Moon, Sun, Bell, LogOut } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useAuthStore } from '@/store/authStore';
 import { cn } from '@/lib/utils';
+import { LocaleSwitcher } from '@/components/layout/LocaleSwitcher';
 
 export function Header(): React.JSX.Element {
     const { setTheme, theme } = useTheme();
     const { user } = useAuthStore();
     const t = useTranslations('auth');
+    const tCommon = useTranslations('common');
+    const tNav = useTranslations('navigation');
 
     const handleLogout = async (): Promise<void> => {
         try {
@@ -31,7 +34,7 @@ export function Header(): React.JSX.Element {
                 href="#main-content"
                 className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:rounded focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground"
             >
-                İçeriğe atla
+                {tCommon('skipToContent')}
             </a>
 
             <div className="flex-1" />
@@ -44,7 +47,7 @@ export function Header(): React.JSX.Element {
                         'hover:bg-accent hover:text-accent-foreground',
                         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
                     )}
-                    aria-label="Bildirimler"
+                    aria-label="Notifications"
                 >
                     <Bell className="h-4 w-4" aria-hidden="true" />
                 </button>
@@ -57,7 +60,7 @@ export function Header(): React.JSX.Element {
                         'hover:bg-accent hover:text-accent-foreground',
                         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
                     )}
-                    aria-label={theme === 'dark' ? 'Açık temaya geç' : 'Koyu temaya geç'}
+                    aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
                 >
                     {theme === 'dark' ? (
                         <Sun className="h-4 w-4" aria-hidden="true" />
@@ -65,6 +68,9 @@ export function Header(): React.JSX.Element {
                         <Moon className="h-4 w-4" aria-hidden="true" />
                     )}
                 </button>
+
+                {/* Locale Switcher */}
+                <LocaleSwitcher />
 
                 {/* User info */}
                 {user && (

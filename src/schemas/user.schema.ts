@@ -15,10 +15,9 @@ export const updateUserPermissionsSchema = z.object({
         z.object({
             pageKey: z.enum([
                 PAGE_KEYS.USERS,
-                PAGE_KEYS.ORDERS,
                 PAGE_KEYS.PRODUCTS,
+                PAGE_KEYS.CATEGORIES,
                 PAGE_KEYS.REPORTS,
-                PAGE_KEYS.SETTINGS,
             ]),
             canView: z.boolean(),
             canCreate: z.boolean(),

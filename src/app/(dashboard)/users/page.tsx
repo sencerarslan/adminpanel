@@ -21,7 +21,7 @@ export default async function UsersPage(): Promise<React.JSX.Element> {
         <div className="space-y-6">
             <div>
                 <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
-                <p className="text-muted-foreground">Sistemdeki tüm kullanıcıları ve yetkilerini yönetin.</p>
+                <p className="text-muted-foreground">{t('subtitle')}</p>
             </div>
 
             <UserTable />

@@ -6,10 +6,9 @@ import { useTranslations } from 'next-intl';
 import {
     LayoutDashboard,
     Users,
-    ShoppingCart,
     Package,
+    Tags,
     BarChart3,
-    Settings,
     ChevronLeft,
     Shield,
 } from 'lucide-react';
@@ -29,10 +28,9 @@ interface NavItem {
 const navItems: NavItem[] = [
     { href: ROUTES.DASHBOARD, icon: LayoutDashboard, labelKey: 'dashboard' },
     { href: ROUTES.USERS, icon: Users, labelKey: 'users', pageKey: PAGE_KEYS.USERS },
-    { href: ROUTES.ORDERS, icon: ShoppingCart, labelKey: 'orders', pageKey: PAGE_KEYS.ORDERS },
     { href: ROUTES.PRODUCTS, icon: Package, labelKey: 'products', pageKey: PAGE_KEYS.PRODUCTS },
+    { href: ROUTES.CATEGORIES, icon: Tags, labelKey: 'categories', pageKey: PAGE_KEYS.CATEGORIES },
     { href: ROUTES.REPORTS, icon: BarChart3, labelKey: 'reports', pageKey: PAGE_KEYS.REPORTS },
-    { href: ROUTES.SETTINGS, icon: Settings, labelKey: 'settings', pageKey: PAGE_KEYS.SETTINGS },
 ];
 
 export function Sidebar(): React.JSX.Element {
@@ -53,7 +51,7 @@ export function Sidebar(): React.JSX.Element {
                 'relative flex flex-col border-r border-border bg-card transition-all duration-300',
                 sidebarOpen ? 'w-64' : 'w-16',
             )}
-            aria-label="Ana navigasyon"
+            aria-label={t('mainNavigation' as any)}
         >
             {/* Logo */}
             <div className="flex h-16 items-center border-b border-border px-4">
@@ -68,7 +66,7 @@ export function Sidebar(): React.JSX.Element {
             </div>
 
             {/* Navigation */}
-            <nav className="flex-1 overflow-y-auto py-4" aria-label="Ana menü">
+            <nav className="flex-1 overflow-y-auto py-4" aria-label={t('mainMenu' as any)}>
                 <ul className="space-y-1 px-2" role="list">
                     {filteredNavItems.map((item) => {
                         const Icon = item.icon;
@@ -109,7 +107,7 @@ export function Sidebar(): React.JSX.Element {
                     'hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
                     'transition-transform',
                 )}
-                aria-label={sidebarOpen ? 'Menüyü kapat' : 'Menüyü aç'}
+                aria-label={sidebarOpen ? t('closeSidebar' as any) : t('openSidebar' as any)}
             >
                 <ChevronLeft
                     className={cn('h-3 w-3 transition-transform', !sidebarOpen && 'rotate-180')}

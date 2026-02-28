@@ -11,19 +11,20 @@ import { useAuthStore } from '@/store/authStore';
 import { cn } from '@/lib/utils';
 import { ROUTES } from '@/constants/routes';
 import type { LoginResponse } from '@/types/auth.types';
-
-const loginSchema = z.object({
-    email: z.string().email('Geçerli bir e-posta adresi giriniz'),
-    password: z.string().min(1, 'Şifre zorunludur'),
-});
-
-type LoginFormValues = z.infer<typeof loginSchema>;
+type LoginFormValues = { email: string; password: string };
 
 export function LoginForm(): React.JSX.Element {
     const t = useTranslations('auth');
+    const tValidation = useTranslations('validation');
+    const tErrors = useTranslations('errors');
     const router = useRouter();
     const searchParams = useSearchParams();
     const setUser = useAuthStore((s) => s.setUser);
+
+    const loginSchema = z.object({
+        email: z.string().email(t('loginError')),
+        password: z.string().min(1, tValidation('required')),
+    });
 
     const form = useForm<LoginFormValues>({
         resolver: zodResolver(loginSchema),
@@ -61,7 +62,7 @@ export function LoginForm(): React.JSX.Element {
 
             router.push(safePath);
         } catch {
-            toast.error('Bağlantı hatası. İnternet bağlantınızı kontrol edin.');
+            toast.error(tErrors('networkError'));
         }
     };
 
