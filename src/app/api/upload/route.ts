@@ -4,6 +4,7 @@ import sharp from 'sharp';
 import { writeFile, mkdir } from 'fs/promises';
 import path from 'path';
 import { randomUUID } from 'crypto';
+import { put } from '@vercel/blob';
 
 const MAX_DIMENSION = 1024;
 const UPLOAD_DIR = path.join(process.cwd(), 'public', 'uploads');
@@ -58,16 +59,27 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
             .webp({ quality: 82 }) // high quality WebP
             .toBuffer();
 
-        // Ensure upload dir exists
-        await mkdir(UPLOAD_DIR, { recursive: true });
-
         // Generate unique filename
         const filename = `${randomUUID()}.webp`;
-        const filepath = path.join(UPLOAD_DIR, filename);
+        let url: string;
 
-        await writeFile(filepath, optimizedBuffer);
+        if (process.env.BLOB_READ_WRITE_TOKEN) {
+            const blobInfo = await put(`uploads/${filename}`, optimizedBuffer, {
+                access: 'public',
+                contentType: 'image/webp',
+            });
+            url = blobInfo.url;
+        } else {
+            if (process.env.VERCEL) {
+                throw new Error("Vercel Blob yapılandırılmadı. Lütfen Vercel projenizde bir Blob Storage oluşturup ayarlarını yapın.");
+            }
+            // Ensure upload dir exists
+            await mkdir(UPLOAD_DIR, { recursive: true });
+            const filepath = path.join(UPLOAD_DIR, filename);
 
-        const url = `/uploads/${filename}`;
+            await writeFile(filepath, optimizedBuffer);
+            url = `/uploads/${filename}`;
+        }
 
         return NextResponse.json({ url }, { status: 200 });
     } catch (error) {
